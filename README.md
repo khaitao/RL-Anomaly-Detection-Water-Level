@@ -1,4 +1,4 @@
-# RL-Anomaly-Detection-Water-Level
+# RL-Anomaly-Detection-in-Water-Level
 
 Deep Reinforcement Learning for Detecting Anomaly in Telemetry Water Level
 

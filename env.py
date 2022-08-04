@@ -41,9 +41,6 @@ class EnvTimeSeries():
         self._df['GroundTruth_Class'] = "Normal"
         self._df['GroundTruth_Class'].loc[self._df['GroundTruth_Water']==self._df['wl']] = "Anomaly"
 
-        #self._df['GroundTruth_predicted'] = 0
-        #self._df['GroundTruth_predicted'].loc[self._df['GroundTruth_Class']=="Anomaly"] = 1
-
         self._df = self._df.dropna(subset=['diff'])
 
         self._train_df, self._val_test_df = train_test_split(self._df, test_size=0.40, shuffle=False)

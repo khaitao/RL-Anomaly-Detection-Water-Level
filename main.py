@@ -10,7 +10,7 @@ import time
 def main():
     DATA_DIR = os.path.abspath("./data/")
 
-    SAVE_PATH = os.path.abspath("./save_model/")
+    SAVE_PATH = os.path.abspath("./Results/")
     NUM_ACTIONS = 2 # number of valid actions (Normal, Anomalies)
     GAMMA = 0.99 # decay rate of past observations
     INITIAL_EPSILON = 0.1 # starting value of epsilon
@@ -36,13 +36,13 @@ def main():
     end_date='2016-06-30 23:50:00'
 
     env = EnvTimeSeries(code,DATA_DIR,past_history,NUM_ACTIONS,start_date, end_date, REWARDS_CORRECT, REWARDS_CORRECT_ANOMALY,REWARDS_INCORRECT)
-    #BATCH_SIZE = len(env._y_train_batch)
     opt = Adam(lr=0.001)
 
     model = Sequential()
     model.add(Dense(36, input_shape=(past_history,), activation='relu'))
     model.add(Dense(18, activation='relu'))
     model.add(Dense(2))
+    
     # compile the keras model
     model.compile(loss='mse', optimizer=opt, metrics=['accuracy'])
 
@@ -54,30 +54,21 @@ def main():
     modelMaxRwd = "{}-GTDQN-MLP-MaxReward-{}Past-{}B{}EP-{}-to{}".format(code, past_history, BATCH_SIZE, NUM_EPOCHS, start_date[:10], end_date[:10])
     modelMaxAcc = "{}-GTDQN-MLP-MaxAcc-{}Past-{}B{}EP-{}-to{}".format(code, past_history, BATCH_SIZE, NUM_EPOCHS, start_date[:10], end_date[:10])
     modelMaxF1 = "{}-GTDQN-MLP-MaxF1-{}Past-{}B{}EP-{}-to{}".format(code, past_history, BATCH_SIZE, NUM_EPOCHS, start_date[:10], end_date[:10])
-    #LineNoti.LineNoti("Model {}@UEAPC Start Run".format(modelName))
-    #fout = open(os.path.join(SAVE_PATH, "rl-network-results.tsv"), "wb")
+
     fout = open(os.path.join(SAVE_PATH, modelName+".tsv"), "w+")
     fout.write("GTDQN-MLP Run with Batch Size:{} Epochs:{}\n".format(BATCH_SIZE, NUM_EPOCHS))
     fout.write("Epocs\tTrainLoss\tValidLoss\tNumWin\tRunTime\tTP\tFN\tFP\tTN\tSpecificity\tRecall\tPrecision\tF1\n")
 
     epsilon = INITIAL_EPSILON
     avg_loss=100;
-    e = 0
-    check_abnormal = 0
-    same_reward = 0
-    prev_reward = 0.0
     train_loss = 100
     valid_loss = 100
-    pre_val_loss = 100
-    pre_train_loss = 100
-    train_val_diff = 0.0
-    pre_diff_val_train = 100
 
     min_val_loss = 100
     max_val_acc = 0
     max_f1 = 0
 
-    pre_diff_divert = 0
+    #pre_diff_divert = 0
 
     max_reward = 0
 
